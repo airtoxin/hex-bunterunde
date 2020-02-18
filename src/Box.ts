@@ -5,25 +5,27 @@ import {
   Polygon,
   Vector,
   Physics,
-  useDraw,
+  useDraw
 } from "@hex-engine/2d";
 import Draggable from "./Draggable";
 
-export default function Box(position: Vector) {
+export default function Box(position: Vector, onCollide: () => void) {
   useType(Box);
 
   const geometry = useNewComponent(() =>
     Geometry({
       shape: Polygon.rectangle(new Vector(25, 25)),
-      position: position.clone(),
+      position: position.clone()
     })
   );
 
-  useNewComponent(() => Physics.Body(geometry));
+  const body = useNewComponent(() => Physics.Body(geometry));
   useNewComponent(() => Draggable(geometry));
 
-  useDraw((context) => {
-    context.fillStyle = "red";
+  body.onCollision(onCollide);
+
+  useDraw(context => {
+    context.fillStyle = "black";
     geometry.shape.draw(context, "fill");
   });
 }
