@@ -6,6 +6,7 @@ import {
   Physics,
   Mouse,
   Vector,
+  Keyboard
 } from "@hex-engine/2d";
 
 export default function Draggable(geometry: ReturnType<typeof Geometry>) {
@@ -14,18 +15,21 @@ export default function Draggable(geometry: ReturnType<typeof Geometry>) {
   const physics = useEntity().getComponent(Physics.Body);
 
   const mouse = useNewComponent(Mouse);
+  const keyboard = useNewComponent(Keyboard);
 
   let originalStatic = false;
   let isDragging = false;
   const startedDraggingAt = new Vector(0, 0);
 
   mouse.onDown((event) => {
-    if (physics) {
-      originalStatic = physics.body.isStatic;
-      physics.setStatic(true);
+    if (keyboard.pressed.has("Shift")) {
+      if (physics) {
+        originalStatic = physics.body.isStatic;
+        physics.setStatic(true);
+      }
+      isDragging = true;
+      startedDraggingAt.mutateInto(event.pos);
     }
-    isDragging = true;
-    startedDraggingAt.mutateInto(event.pos);
   });
 
   mouse.onMove((event) => {
